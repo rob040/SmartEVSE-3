@@ -1,6 +1,7 @@
 # Hardware installation
 
-We refer to [this wiring diagram](SmartEVSEv3_build.pdf) for wiring the SmartEVSE.
+We refer to [this wiring diagram (pdf)](SmartEVSEv3_build.pdf) for wiring the SmartEVSE.
+
 
 # Supported modbus kWh meters
 The following meters are directly supported as Mains or EV meter:
@@ -8,18 +9,28 @@ The following meters are directly supported as Mains or EV meter:
 - Finder 7E.78.8.400.0212
 - Finder 7M.38.8.400.0212
 - Eastron SDM630, SDM230, SDM72D
-- ABB B23 212-100
+- ABB B23 212-100 *[1]*
 - Sinotimer DTS6619
 - WAGO 879-30x0
 
-If your meter is not listed, you might be able to use the Custom option in the menu, that let's you enter each register manually.<br>
-Connect the A and B of your meter to the A and B terminals of the SmartEVSE.<br>
-Note that the ABB meter has the A/B signals reversed, you should connect A to B, and B to A on the ABB meter.<br>
-You can use Cat5 network cable for the wiring between SmartEVSE(s), kWh meter(s) and Sensorbox.<br>
-Make sure to use one twisted pair for A and B, so for example A=Green, B=Green/White
+If your meter is not listed, you might be able to use the Custom option in the setup menu, that let's you enter each register manually.
+Connect the RS485 A and B of your meter to the RS485 A and B terminals of the SmartEVSE.
+
+You can use UTP network cable (e.g. Cat5) for the wiring between SmartEVSE(s), kWh meter(s) and Sensorbox.
+* Make sure to use one twisted pair for A and B, so for example A=Green, B=Green/White on the UTP cable.
+* All RS485 devices must be connected looped through (daisy-chained); do not create a star network, when total cable length exceeds several meters.
+
+Set any connected modbus kWh meter to a unique modbus address above 10, and
+in SmartEVSE LCD setup menu set the Mains meter address or EV meter address accordingly.
+
+*[1] Note that the ABB meter has the A/B signals reversed, you should connect A to B, and B to A on the ABB meter.*
+
 
 # Inverted wiring of kWh meter
-If you are using a 3 phase Eastron kWh meter, you can feed it from below (like in most Dutch power panels). Now the polarity of currents is reversed, so in the MainsMeter or EVMeter configuration you should choose kWh meter type "Inverted Eastron".
+If you are using a 3 phase Eastron kWh meter, you can feed it from below (like in most Dutch power panels).
+Now the polarity of currents is reversed, so in the SmartEVSE LCD setup menu of MainsMeter or EVMeter configuration
+you should choose kWh meter type "Inverted Eastron".
+
 
 # Subpanel or "garage" configuration
 If you have other current-users on a Subpanel, use this wiring and the added configuration:
@@ -40,15 +51,19 @@ If you have other current-users on a Subpanel, use this wiring and the added con
                                         |              |
                             [washer breaker 16A]  [smartevse breaker 16A]
 
-   In this example you configure Mains to 25A, MaxCircuit to 16A; the charger will limit itself so that neither the 25A mains nor the 16A from the subpanel will be
-   exceeded...
-   Note that for this functionality you will need to be in Smart or Solar mode; it is no longer necessary to enable Load Balancing for this function.
+In this example you configure Mains to 25A, MaxCircuit to 16A; the charger will limit
+itself so that neither the 25A mains nor the 16A from the subpanel will be exceeded...
+
+* Note that for this functionality SmartEVSE will need to be in Smart or Solar mode.
+
 
 # Second Contactor C2
-One can add a second contactor (C2) that switches off 2 of the 3 phases of a three-phase Mains installation; this can be useful if one wants to charge of off
-      Solar; EV's have a minimal charge current of 6A, so switching off 2 phases allows you to charge with a current of 6-18A, while 3 phases have a minimum current
-      of 3x6A=18A. This way you can still charge solar-only on smaller solar installations.
-    - one should wire C2 according to this schema:
+One can add a second contactor (C2) that switches off two of the three phases in a three-phase Mains installation;
+this can be useful if one wants to charge of off Solar; EV's have a minimal charge current of 6A, so
+switching off two phases allows you to charge with a current of 6-18A, while three phases have a minimum current
+of 3x6A=18A. This way you can still charge solar-only on smaller solar installations or the sun isn't at full strength.
+
+One should wire C2 according to this schema:
 
             N    L1   L2   L3
             |    |    |    |
@@ -64,22 +79,28 @@ One can add a second contactor (C2) that switches off 2 of the 3 phases of a thr
           |    EV-cable      |
           --------------------
 
-      This way the (dangerous) situation is avoided that some Phases are switched ON, and Neutral is switched OFF.
-      Note that it is important that you actually DO NOT switch the L1 pin of the CCS plug with the C2 contactor; some cars (e.g. Tesla Model 3) will go into error;
-      they expect the charging phase to be on the L1 pin when single-phase charging...
-      Note also that in case the phases cannot be detected automatically (especially when no EVmeter is connected), and SmartEVSE _knows_ it is charging at a single
-      phase (e.g. because Contact2 is at "Always Off"), it assumes that L1 is the phase we are charging on!!
+This way the (dangerous) situation is avoided that some Phases are switched ON, and Neutral is switched OFF.
+* Note that it is important that you actually DO NOT switch the L1 pin of the CCS plug with the C2 contactor;
+  some cars (e.g. Tesla Model 3) will go into error;
+  they expect the charging phase to be on the L1 pin when single-phase charging...
+* Note also that in case the phases cannot be detected automatically (especially when no EVmeter is connected),
+  and SmartEVSE _knows_ it is charging at a single phase (e.g. because Contact2 is at "Always Off"),
+  it assumes that L1 is the phase we are charging on.
 
-      By default C2 is switched OFF ("Not present"); if you want to keep on charging on 3 phases after installing C2, you should change the setting Contact2 in the
-      Setup Menu.
+By default C2 is switched OFF ("Not present");
+if you want to keep on charging on 3 phases after installing C2,
+you should change the setting Contact2 in the Setup Menu.
+
 
 # Multiple SmartEVSE controllers on one mains supply (Power Share)
 Up to eight SmartEVSE modules can share one mains supply.
 
 Hardware connections:
-* Connect the A, B and GND connections from the Master to the Node(s).
+* Connect the RS485 A, B and GND connections from the Master to all the Nodes.
 * So A connects to A, B goes to B etc.
 * If you are using the Sensorbox, you should connect the A, B, +12V and GND wires from the sensorbox to the same screw terminals of the SmartEVSE!
+* Any modbus kWh meter also connect to this RS485 A, B and GND connections.
+* All RS485 devices must be connected looped through (daisy-chained); do not create a star network!
 Make sure that the +12V wire from the sensorbox is connected to only -one– SmartEVSE.
 
 

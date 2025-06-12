@@ -7,7 +7,8 @@ The default topic prefix is SmartEVSE/xxxx, where xxxx is your EVSE serial numbe
 Below we use "<prefix>" for this.
 
 # EVSE MQTT settable
-*  <prefix> "/Set/Mode" = [String: one of "Off"|"Normal"|"Smart"|"Solar"]
+
+*  <prefix> "/Set/Mode" = [String: one of "Off" | "Normal" | "Smart" | "Solar"]
 
 *  <prefix> "/Set/CurrentOverride" = [Integer: deciAmpere, <MinCurrent>...<MaxCurrent>]
 
@@ -27,71 +28,71 @@ Below we use "<prefix>" for this.
 
 *  <prefix> "/Set/RequiredEVCCID" = [String]
 *  <prefix> "/Set/ColorOff" = [String: "R:G:B",
-	where R,G,B is integer value 0. .255]
+	where R,G,B is integer value 0...255]
 *  <prefix> "/Set/ColorNormal" = [String: "R:G:B",
-	where R,G,B is integer value 0. .255]
+	where R,G,B is integer value 0...255]
 *  <prefix> "/Set/ColorSmart" = [String: "R:G:B",
-	where R,G,B is integer value 0. .255]
+	where R,G,B is integer value 0...255]
 *  <prefix> "/Set/ColorSolar" = [String: "R:G:B",
-	where R,G,B is integer value 0. .255]
+	where R,G,B is integer value 0...255]
 
 # EVSE MQTT publish
 
-* <prefix> "/connected" = "online"
+* <prefix> "/connected" = [String: one of  "online" | "offline" ]
 
 * "/homeassistant/" <prefix> "/config" = JSON string announcement configuration
 
-* <prefix> "/MainsCurrentL1" = [Integer: Ampere]
+* <prefix> "/MainsCurrentL1" = [Integer: deciAmpere]
 
-* <prefix> "/MainsCurrentL2" = [Integer: Ampere]
+* <prefix> "/MainsCurrentL2" = [Integer: deciAmpere]
 
-* <prefix> "/MainsCurrentL3" = [Integer: Ampere]
+* <prefix> "/MainsCurrentL3" = [Integer: deciAmpere]
 
-* <prefix> "/EVCurrentL1" = [Integer: Ampere]
+* <prefix> "/EVCurrentL1" = [Integer: deciAmpere]
 
-* <prefix> "/EVCurrentL2" = [Integer: Ampere]
+* <prefix> "/EVCurrentL2" = [Integer: deciAmpere]
 
-* <prefix> "/EVCurrentL3" = [Integer: Ampere]
+* <prefix> "/EVCurrentL3" = [Integer: deciAmpere]
 
 * <prefix> "/ESPUptime" = [Integer: Seconds]
 
 * <prefix> "/ESPTemp" = [Integer: DegreesC]
 
-* <prefix> "/Mode" = [String: one of  "Off"|"Normal"|"Smart"|"Solar"|"N/A"]
+* <prefix> "/Mode" = [String: one of  "Off" | "Normal" | "Smart" | "Solar" | "N/A"]
 
 * <prefix> "/MaxCurrent" = [Integer: deciAmpere]
 
-* <prefix> "/ChargeCurrent" = [Integer: Ampere]
+* <prefix> "/ChargeCurrent" = [Integer: deciAmpere]
 
-* <prefix> "/ChargeCurrentOverride" = [Integer: Ampere]
+* <prefix> "/ChargeCurrentOverride" = [Integer: deciAmpere]
 
-* <prefix> "/Access" = [String: one of "Deny"|"Allow"]
+* <prefix> "/Access" = [String: one of "Deny" | "Allow"]
 
-* <prefix> "/RFID" = [String: one of  "Not Installed"|"Ready to read card"|"Present"|"Card Stored"|"Card Deleted"|"Card already stored"|"Card not in storage"|"Card Storage full"|"Invalid"|"NOSTATUS"]
+* <prefix> "/RFID" = [String: one of  "Not Installed" | "Ready to read card" | "Present" | "Card Stored" | "Card Deleted" | "Card already stored" | "Card not in storage" | "Card Storage full" | "Invalid" | "NOSTATUS"]
 
 * <prefix> "/RFIDLastRead" = [String: "FFFFFFFFFF", 6-byte hex string]
 
-* <prefix> "/State" = [String: one of "Ready to Charge"|"Connected to EV"|"Charging"|"D"|"Request State B"|"State B OK"|"Request State C"|"State C OK"|"Activate"|"Charging Stopped"|"Stop Charging"|"Modem Setup"|"Modem Request"|"Modem Done"|"Modem Denied"|"NOSTATE"]
+* <prefix> "/State" = [String: one of "Ready to Charge" | "Connected to EV" | "Charging" | "D" | "Request State B" | "State B OK" | "Request State C" | "State C OK" | "Activate" | "Charging Stopped" | "Stop Charging" | "Modem Setup" | "Modem Request" | "Modem Done" | "Modem Denied" | "NOSTATE"]
 
-* <prefix> "/Error" = [String: one of  "None"|"No Power Available"|"Communication Error"|"Temperature High"|"EV Meter Comm Error"|"RCM Tripped"|"Waiting for Solar"|"Test IO"|"Flash Error" ]
+* <prefix> "/Error" = [String: one of  "None" | "No Power Available" | "Communication Error" | "Temperature High" | "EV Meter Comm Error" | "RCM Tripped" | "Waiting for Solar" | "Test IO" | "Flash Error" ]
 
-* <prefix> "/EVPlugState" =  [String:  "Connected"|"Disconnected"]
+* <prefix> "/EVPlugState" =  [String:  "Connected" | "Disconnected"]
 
 * <prefix> "/WiFiSSID"  =  [String: <WiFi.SSID>]
 
 * <prefix> "/WiFiBSSID" = [String: <WiFi.BSSIDstr>]
 
-* <prefix> "/WiFiRSSI" = [String: <WiFi.RSSI>]
+* <prefix> "/WiFiRSSI" = [Integer: -dB signal strength]
 
-* <prefix> "/EVChargePower" = [Integer: <PowerMeasured>]
+* <prefix> "/EVChargePower" = [Integer: W]
 
-* <prefix> "/EVEnergyCharged" = [Integer: <EnergyCharged>]
+* <prefix> "/EVEnergyCharged" = [Integer: Wh]
 
 * <prefix> "/EVTotalEnergyCharged" = [Integer: <EnergyEV>]
 
 * <prefix> "/HomeBatteryCurrent" = [Integer: <homeBatteryCurrent>]
 
 
-# TODO
+### TODO
 
 * Bring MQTT settable topics to same level as the REST API settings

@@ -1,11 +1,19 @@
-# Improved Start/Stop Functionality via LCD Screen
+# LCD Screen Buttons control
+### Start/Stop Functionality via LCD Screen Buttons
 
 * Pressing the "O" button for longer than 2 seconds will open the Menu screen.
 * Pressing the "<" button for less than 2 seconds will toggle between Smart and Solar modes.
 * Pressing the "<" button for longer than 2 seconds will deny access, setting the mode to "Off" and stopping charging.
 * Pressing the ">" button for longer than 2 seconds will grant access, activating the previously set mode and resuming charging.
+* Simultaneously pressing both "<" and ">" buttons will refresh the LCD screen.
 
-Simultaneously pressing both "<" and ">" buttons will refresh the LCD screen.
+### Locking the LCD Screen Buttons
+
+The Buttons below the LCD screen can be locked/unlocked.
+This may be usefull when unauthorized local control is a possibility.
+* By pressing both the "O" and ">" buttons at power-up, or
+* By checking/unchecking the LCDLock box in the webserver screen.
+There is no indication on the LCD when the lock is active.
 
 ---
 
@@ -60,17 +68,46 @@ If an error occurs, SmartEVSE will stop charging and display one of the followin
 
 ---
 
-# Firmware Enhancements
+# Mains meter data
 
-* New endpoints for sending L1/2/3 data, removing the need for a SensorBox.
-    * **Note**: Set MainsMeter to the 'API' option in the config menu when sending L1/2/3 data.
-* New endpoints for sending EvMeter L1/2/3 data (including energy/power).
-    * **Note**: Set EvMeter to the 'API' option in the config menu when sending L1/2/3 data.
-* Callable API endpoints for integration with third-party systems (e.g., REST API and Home Assistant). These allow you to:
+In order to perform the **Smart** charging (take other home consumers into account and prevent electrical
+overloads) and **Solar** charging (use surplus power and net zero consumption), the SmartEVSE needs
+information about the currents at the mains entry: the Mains-Meter.
+
+This can be accomplished by one of the following methods:
+* Sensorbox with current transformer clamps on the mains entry. The sensorbox is connected to SmartEVSE via RS485 modbus plus 12V power.
+* Use a dedicated energy/power (kWh) meter with modbus interface at the mains entry.
+  See [this support list](installation.md#supported-modbus-kwh-meters) for your options.
+* Smart meter DSMR P1 port to Sensorbox2 or compatible products, connected to SmartEVSE via RS485 modbus plus 12V power.
+* Smart meter DSMR P1 port to SlimmeLezer or ESPhome DSMR or other (open source-) products, connected over Wi-Fi
+* Smart meter DSMR P1 port data obtained from home automation system, like [Home Assistant](https://www.home-assistant.io/), send to SmartEVSE over WiFi.
+
+  The integration with third-party home automation systems allow you to:
     * Change the charging mode.
     * Override the charge current.
     * Pass current measurements (e.g., p1, battery) without additional hardware.
     * Switch between single- and three-phase power (requires an extra 2P relay on the C2 connector).
+
+For sending Mains-meter data over WiFi there are two API methods available:
+* [REST API](REST_API.md#post-currents)
+* [MQTT API](MQTT_API.md)
+In any case, the Mains-meter data contains the L1,L2,L3 phase currents that must be send at regular intervals, never later than 10 seconds (there is a 11 second timeout that aborts charging).
+
+If using Mains-meter data API over WiFi, you have to configure the MainsMeter in LCD setup menu to the 'API' option.
+
+# EV meter data
+
+An optional EV energy/power (kWh) meter with modbus interface at the charge output will measure
+power and charged energy, and display this on the LCD and web interface.
+With this meter included, the Solar charging mode can more accurately decide between charging at 1-Phase or 3-Phases and changing between these.
+See [this support list](installation.md#supported-modbus-kwh-meters) for your options.
+
+Alternatively, EV meter data, consisting of L1,L2,L3 phase currents and energy and power,
+can be send to the SmartEVSE using one of the two available API methods:
+* [REST API](REST_API.md#post-currents)
+* [MQTT API](MQTT_API.md)
+
+If using EV-meter data API over WiFi, you have to configure the EV-Meter in LCD setup menu to the 'API' option.
 
 ---
 
@@ -88,7 +125,7 @@ A simple timer for delayed charging is available via the webserver.
 * Entering a "StopTime" will enable a "Daily" checkbox, allowing the StartTime/StopTime combination to repeat daily starting from the selected date.
 * To clear StartTime, StopTime, and Repeat, refresh the webpage and select Normal, Solar, or Smart mode.
 
-### Known Bugs
+### Known Issues
 
 * If the NTP time is not yet synchronized (e.g., after a reboot), results may be unpredictable. Wait until the system time settles.
 * If the StopTime is set more than 24 hours after the StartTime, results are untested. Ensure that values make sense.
@@ -101,13 +138,11 @@ A European Union directive allows electricity providers to charge consumers base
 
 For more information, visit [this link](https://github.com/serkri/SmartEVSE-3/issues/215).
 
-* A new menu option, "SumMains," has been added with a default setting of 600A.
-* This setting applies in Smart or Solar mode only.
-* In addition to other limits (Mains, MaxCircuit), the charging current will be restricted to ensure that the total current across all phases does not exceed the SumMains setting.
-* If you are unsure how to configure this, it is recommended to leave the setting at its default value.
+A menu option, "SumMains" is available for Smart or Solar charging mode.
+In addition to other limits (Mains, MaxCircuit), the charging current will be restricted to ensure that the total current across all phases does not exceed the SumMains setting.
 
-# Locking the keys below the LCD screen
+SumMains has a default setting of 600A.
+If you are unsure how to configure this, it is recommended to leave the setting at its default value.
 
-The keys below the LCD screen can be locked/unlocked:
-* By pressing middle and right key at boot, or
-* By checking/unchecking the LCDLock box in the webserver screen.
+At time of writing, <ul>Capacity Rate Limiting</ul> is employed in **Belgium**, but not in the Netherlands, or Germany.
+
