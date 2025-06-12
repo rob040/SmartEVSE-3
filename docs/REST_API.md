@@ -4,31 +4,130 @@ The REST API can be accessed through any http tool, here as an example CURL will
 
 # GET: /settings
 
-curl -X GET http://ipaddress/settings
+    curl -X GET http://ipaddress/settings
 
-will give output like:
+will give a one long line output like:
 ```
 {"version":"21:02:46 @Jan  3 2024","mode":"OFF","mode_id":0,"car_connected":false,"wifi":{"status":"WL_CONNECTED","ssid":"wifi_nomap_EXT","rssi":-82,"bssid":"28:87:BA:D6:B9:DE"},"evse":{"temp":16,"temp_max":60,"connected":false,"access":false,"mode":1,"loadbl":0,"pwm":1024,"solar_stop_timer":0,"state":"Ready to Charge","state_id":0,"error":"None","error_id":0,"rfid":"Not Installed"},"settings":{"charge_current":0,"override_current":0,"current_min":6,"current_max":16,"current_main":25,"current_max_circuit":16,"current_max_sum_mains":600,"solar_max_import":9,"solar_start_current":29,"solar_stop_time":10,"enable_C2":"Always On","modem":"Not present","mains_meter":"InvEastrn","starttime":0,"stoptime":0,"repeat":0},"mqtt":{"host":"10.0.0.28","port":1883,"topic_prefix":"SmartEVSE-51446","username":"homeassistant","password_set":true,"status":"Connected"},"home_battery":{"current":0,"last_update":0},"ev_meter":{"description":"Eastron3P","address":11,"import_active_power":0,"total_kwh":5670.1,"charged_kwh":0,"currents":{"TOTAL":1,"L1":0,"L2":0,"L3":1},"import_active_energy":5670.1,"export_active_energy":0},"mains_meter":{"import_active_energy":8614.8,"export_active_energy":5289.3},"phase_currents":{"TOTAL":75,"L1":57,"L2":6,"L3":12,"last_data_update":1704535684,"charging_L1":false,"charging_L2":false,"charging_L3":false,"original_data":{"TOTAL":75,"L1":57,"L2":6,"L3":12}},"backlight":{"timer":0,"status":"OFF"}}
 ```
 
+When formatted for readability it reads:
+```json
+{
+	"version": "21:02:46 @Jan  3 2024",
+	"mode": "OFF",
+	"mode_id": 0,
+	"car_connected": false,
+	"wifi": {
+		"status": "WL_CONNECTED",
+		"ssid": "wifi_nomap_EXT",
+		"rssi": -82,
+		"bssid": "28:87:BA:D6:B9:DE"
+	},
+	"evse": {
+		"temp": 16,
+		"temp_max": 60,
+		"connected": false,
+		"access": false,
+		"mode": 1,
+		"loadbl": 0,
+		"pwm": 1024,
+		"solar_stop_timer": 0,
+		"state": "Ready to Charge",
+		"state_id": 0,
+		"error": "None",
+		"error_id": 0,
+		"rfid": "Not Installed"
+	},
+	"settings": {
+		"charge_current": 0,
+		"override_current": 0,
+		"current_min": 6,
+		"current_max": 16,
+		"current_main": 25,
+		"current_max_circuit": 16,
+		"current_max_sum_mains": 600,
+		"solar_max_import": 9,
+		"solar_start_current": 29,
+		"solar_stop_time": 10,
+		"enable_C2": "Always On",
+		"modem": "Not present",
+		"mains_meter": "InvEastrn",
+		"starttime": 0,
+		"stoptime": 0,
+		"repeat": 0
+	},
+	"mqtt": {
+		"host": "10.0.0.28",
+		"port": 1883,
+		"topic_prefix": "SmartEVSE-51446",
+		"username": "homeassistant",
+		"password_set": true,
+		"status": "Connected"
+	},
+	"home_battery": {
+		"current": 0,
+		"last_update": 0
+	},
+	"ev_meter": {
+		"description": "Eastron3P",
+		"address": 11,
+		"import_active_power": 0,
+		"total_kwh": 5670.1,
+		"charged_kwh": 0,
+		"currents": {
+			"TOTAL": 1,
+			"L1": 0,
+			"L2": 0,
+			"L3": 1
+		},
+		"import_active_energy": 5670.1,
+		"export_active_energy": 0
+	},
+	"mains_meter": {
+		"import_active_energy": 8614.8,
+		"export_active_energy": 5289.3
+	},
+	"phase_currents": {
+		"TOTAL": 75,
+		"L1": 57,
+		"L2": 6,
+		"L3": 12,
+		"last_data_update": 1704535684,
+		"charging_L1": false,
+		"charging_L2": false,
+		"charging_L3": false,
+		"original_data": {
+			"TOTAL": 75,
+			"L1": 57,
+			"L2": 6,
+			"L3": 12
+		}
+	},
+	"backlight": {
+		"timer": 0,
+		"status": "OFF"
+	}
+}
+```
+
 This output is often used to add to your bug report, so the developers can see your configuration.
+
 
 NOTE:
 In the http world, GET parameters are passed like this:
-curl -X GET http://ipaddress/endpoint?param1=value1&param2=value2
+
+    curl -X GET http://ipaddress/endpoint?param1=value1&param2=value2
+
 and POST parameters are passed like this:
-curl -X POST http://ipaddress/endpoint -d 'param1=value1' -d 'param2=value2' -d ''
 
-Now in the ESP world, we all have picked up the habit of using the GET way of passing parameters also for POST commands. SmartEVSE development not excluded....
-From version v3.6.0 on, instead of using the Arduino Core webserver libraries, we are now using the Mongoose webserver, which is broadly used. This webserver however sticks to the "normal" http standards.
+    curl -X POST http://ipaddress/endpoint -d 'param1=value1' -d 'param2=value2' -d ''
 
-This means that if you POST a request to SmartEVSE > 3.6.0, the webserver will be waiting for the -d data until it times out (or you ctrl-C your curl command). -d ''
-You can prevent this by adding
-'''
--d ''
-'''
+Now in the embedded world, we all have picked up the habit of using the GET way of passing parameters also for POST commands.<br>
+However in this project, instead of using the Arduino Core webserver libraries, we are using the Mongoose webserver, which is broadly used. This webserver however sticks to the "normal" http standards.
 
-to your curl POST command. -d ''
+This means that if you POST a request to SmartEVSE, the webserver will be waiting for the -d data until it times out (or you ctrl-C your curl command).
+You can prevent this by adding ___-d ''___ to your curl POST command, as demonstrated above.
 
 # POST: /settings
 * backlight
@@ -41,7 +140,8 @@ to your curl POST command. -d ''
 
 * mode
 
-&emsp;&emsp;Only following values are permitted:
+&emsp;&emsp;Sets the EVSE operating mode.<br>
+<br>&emsp;&emsp;Only following values are permitted:
 <br>&emsp;&emsp;0: OFF
 <br>&emsp;&emsp;1: NORMAL
 <br>&emsp;&emsp;2: SOLAR
@@ -49,21 +149,26 @@ to your curl POST command. -d ''
 
 * stop_timer
 
-&emsp;&emsp;Set the stop timer to be used when there isn't sufficient solar power. Value must be >=0 and <= 60.
-<br>&emsp;&emsp;Using 0 will disable the stop timer.
+&emsp;&emsp;Set the solar stop timer start value in minutes.
+<br>&emsp;&emsp;It determines the time to continue charging at minimum current when there isn't
+<br>&emsp;&emsp;sufficient solar power. Upon timeout the charging is terminated. When solar power
+<br>&emsp;&emsp;increases above minimum, the solar stop timer is cleared and solar charging continues.
+<br>&emsp;&emsp;Value must be >=0 and <= 60 minutes. Using 0 will disable the solar stop timer.
 
 * disable_override_current
 
-&emsp;&emsp;If this parameter is passed the override current will be reset (value doesn't matter)
+&emsp;&emsp;When this parameter is passed, the override current will be reset (value doesn't matter)
 
 * override_current
 
-&emsp;&emsp;Works only when using NORMAL or SMART mode
+&emsp;&emsp;Sets the output current limit.
+<br>&emsp;&emsp;Works only when using NORMAL or SMART mode
 <br>&emsp;&emsp;Desired current multiplied by 10
-<br>&emsp;&emsp;If set to 0, override_current is disabled
+<br>&emsp;&emsp;When set to 0, override_current is disabled
 
 <br>&emsp;&emsp;Examples:
-<br>&emsp;&emsp;If the desired current is 8.3A the value to be sent is 83
+<br>&emsp;&emsp;When the desired current is 8.3A the value to be sent is 83
+
 ```
     curl -X POST http://ipaddress/settings?override_current=83 -d ''
 ```
@@ -73,17 +178,22 @@ to your curl POST command. -d ''
 &emsp;&emsp;Enables switching between 1 phase mode and 3 phase mode by controlling a 2nd contactor (C2 port)
 <br>&emsp;&emsp;
 <br>&emsp;&emsp;Note 1: The 2nd contactor will only be turned ON when state chages to C (Charging)
-<br>&emsp;&emsp;Note 2: This is just changing the config setting, the contactor will not be controlled immediately but only when there is a
-<br>&emsp;&emsp;state change.
+<br>&emsp;&emsp;Note 2: This is just changing the config setting, the contactor will not be controlled
+<br>&emsp;&emsp;immediately but only when there is a state change.
 <br>&emsp;&emsp;
 <br>&emsp;&emsp;If car is charging and you want to change from 1F to 3F or vice versa:
-```
   - Change mode to OFF
   - Enable or disable C2 contactor
   - Change to desired value: 0 "Not present", 1 "Always Off", 2 "Solar Off", 3 "Always On", 4 "Auto"
-  - Examples:
-  - If the desired C2 mode is "Solar Off", the string to be sent is 2
+
+<br>&emsp;&emsp;  Example:
+<br>&emsp;&emsp;  - If the desired C2 mode is "Solar Off", the string to be sent is 2
 ```
+    curl -X POST 'http://ipaddress/settings?mode=0 -d ''
+    curl -X POST 'http://ipaddress/settings?enable_C2=2 -d ''
+    curl -X POST 'http://ipaddress/settings?mode=2 -d ''
+```
+
 * starttime
 
 &emsp;&emsp;Enables delayed charging; always has to be combined with sending the mode in which you want to start charging.
@@ -110,7 +220,7 @@ to your curl POST command. -d ''
 * current_min
 
 &emsp;&emsp;The Minimum Charging Current in Ampères, per phase.
-<br>&emsp;&emsp;Usually you should leave this setting at its default value (6A) since this is standarized. 
+<br>&emsp;&emsp;Usually you should leave this setting at its default value (6A) since this is standarized.
 <br>&emsp;&emsp;Note: This setting is useful for EV's that don't obey standards, like the Renault Zoe, whose MinCurrents not only differ
 <br>&emsp;&emsp;from the standard, but also change when charging at 1 phase and charging at 2 phases.
 <br>&emsp;&emsp;The values even differ per build year.

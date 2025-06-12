@@ -3,6 +3,9 @@ SmartEVSE v3
 
 > [!NOTE]
 > This software is a fork of [SmartEVSE/SmartEVSE-3](https://github.com/SmartEVSE/SmartEVSE-3) and combines several other forks of that with enhancements and improvements listed in the release notes.
+>
+> Do check the [unique features of THIS fork](#unique-features-of-this-fork)
+>
 
 Smart Electric Vehicle Charge Controller
 
@@ -22,14 +25,14 @@ This repo provides the software (firmware) for the controller.
 
 1. **NORMAL**
    The most basic mode of EV charging; It supplies as much current as configured, taking the mains fuses, the charge cable capacity and EV max into account. The other home consumers and supplies are __not__ taken into account.
-   
+
 2. **SMART**
    Similar to NORMAL, but takes other home consumers and supplies into account. This assures that at no time the main fuses are overloaded due to multiple active high power consumers being active. The user has also more control over limiting the current draw by the charging car.
-   
+
 3. **SOLAR**
    In this mode, the car is charged with Solar surplus power, that is, after all home consumers are supplied with Solar power and net zero power is send to or consumed from the power company.
    The EVSE uses 1-phase charging (typically 6A - 16A = 1.4 kW - 3.6 kW) and 3-phase charging (typically 3x6 - 3x16A = 4.1 kW - 11kW) whenever possible, using an extra 2-phase contactor.
-   
+
 For SMART and SOLAR modes, an extra sensorbox or one of many alternative methods of providing Mains phase current information is necessary.
 
 
@@ -55,10 +58,34 @@ For SMART and SOLAR modes, an extra sensorbox or one of many alternative methods
 - Rudimentary support for home batteries
 - Supporting delayed charging
 
-# Connecting the SmartESVE to WiFi
+# unique features of THIS fork
+
+This [fork](https://github.com/rob040/SmartEVSE-3) contains the following unique features, when compared to release 3.7.4 of of its [base repo](https://github.com/SmartEVSE/SmartEVSE-3):
+
+	- **Solar charging** at **1-phase** and **3-phase** with automatic changing,
+   - Extra solar control options on webserver
+	- Remote debug (over telnet) with **version information** and **color selection**
+	- Debug CSV output: monitor certain key parameters over time on telnet remote debug output
+	- "Access denied" on LCD is renamed to "OFF"
+	- **MQTT update on change** asap, no 10s wait, no post every 10s
+	- JSON output corrections on rounding floating point values to one decimal (i.s.o. 0.400000095 of 0.599976)
+
+This fork has also explicitly **removed some features** that are unanted or untested:
+	- SMARTEVSE V4 code (some conditional parts included, not functional)
+	- OCPP disabled (backoffice provider; function is untested; may even not compile)
+	- Custom button code (unwanted)
+	- Modem disabled (part of V4)
+	- Sensorbox 2 code disabled, use (untestable), use [DSMR P1 port reader instead](docs/operation.md#mains-meter-data)
+	- autoupdate feature disabled (unwanted)
+
+
+# Connecting the SmartEVSE to WiFi
 
 For connecting your device to your WiFi, follow the detailed instructions
-on the [Configuration page](docs/configuration.md#all-menu-options-on-the-lcd-screen) page, WIFI section.
+on the [Configuration page](docs/configuration.md#wifi).
+
+  * NOTE: **this is going to change in the rob040 repo**; no longer the need of weird app on your phone!
+
 
 # Updating Firmware
 
@@ -69,6 +96,9 @@ After updating the firmware, you can access the status page again using the norm
 
 # Documentation
 
-[Hardware installation](docs/installation.md)<br>
-[Configuration](docs/configuration.md)<br>
-[Operation](docs/operation.md)<br>
+ - [Hardware installation](docs/installation.md)
+ - [Configuration](docs/configuration.md)
+ - [Operation](docs/operation.md)
+ - [REST API](docs/REST_API.md)
+ - [MQTT API](docs/MQTT_API.md)
+ - [Building and Flashing the firmware](docs/building_flashing.md)

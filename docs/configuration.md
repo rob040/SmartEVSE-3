@@ -30,7 +30,7 @@ Only appears when [CONFIG](#config) is set to **Socket**.
 - **Solenoid**: Dostar, DUOSIDA DSIEC-ELB / ELM, or Ratio lock.
 - **Motor**: Signal wire reversed, DUOSIDA DSIEC-EL or Phoenix Contact.
 
-## PWR SHARE  
+## PWR SHARE
 Power Share (formerly LOAD BAL). 2 Upto 8 SmartEVSE’s can be connected via Modbus, and the available power will be shared.
 
 - **Disabled**: Power sharing is not used (single SmartEVSE).
@@ -42,12 +42,12 @@ Only appears if [MODE](#mode) is **Smart** or **Solar**. Set the type of MAINS k
 
 - **Disabled**: No MAINS meter connected (only Normal mode possible).
 - **Sensorbox**: The Sensorbox sends measurement data to the SmartEVSE.
-- **API**: MAINS meter data is fed through the [REST API](REST_API.md) or [MQTT API](#mqtt_api).
+- **API**: MAINS meter data is fed through the [REST API](REST_API.md) or [MQTT API](MQTT_API.md).
 - **Phoenix C** / **Finder** / **...** / **Custom**: A Modbus kWh meter is used.
 
-**Note**:  
-- Eastron1P is for single-phase Eastron meters.  
-- Eastron3P is for Eastron three-phase meters.  
+**Note**:
+- Eastron1P is for single-phase Eastron meters.
+- Eastron3P is for Eastron three-phase meters.
 - InvEastron is for Eastron three-phase meters fed from below (inverted).
 
 If MAINS MET is not **Disabled** and not **API**, these settings appear:
@@ -64,9 +64,9 @@ Set Type of EV kWh Meter (measures power and charged energy)
 - **API**: EV meter data is fed through the REST API or MQTT API.
 - **Phoenix C** / **Finder** / **...** / **Custom**: A Modbus kWh meter is used.
 
-**Note**:  
-- Eastron1P is for single-phase Eastron meters.  
-- Eastron3P is for Eastron three-phase meters.  
+**Note**:
+- Eastron1P is for single-phase Eastron meters.
+- Eastron3P is for Eastron three-phase meters.
 - InvEastron is for Eastron’s three-phase meter fed from below (inverted).
 
 If EV METER is not **Disabled** and not **API**, this setting appears:
@@ -76,22 +76,22 @@ If EV METER is not **Disabled** and not **API**, this setting appears:
 ## MAINS
 Only appears when a [MAINS MET](#main_smet) is configured. Set max mains current (10-200A) per phase.
 
-## MIN  
+## MIN
 Only appears when a [MAINS MET](#main_smet) is configured. Set the min charge current for the EV (6-16A) per phase.
 
 ## MAX
 Set the MAX charge current for the EV: (10-80A) per phase. If [CONFIG](#config) is set to **Fixed**, configure MAX to be lower than or equal to the maximum current that your fixed cable can carry.
 
 ## CIRCUIT
-Only appears when an [EV METER](#ev_meter) is configured, in **Smart** or **Solar** mode. Set the max current the EVSE circuit can handle (power sharing): 10-200A.  
+Only appears when an [EV METER](#ev_meter) is configured, in **Smart** or **Solar** mode. Set the max current the EVSE circuit can handle (power sharing): 10-200A.
 
 ## START
 Only shown when [MODE](#mode) is set to **Solar** and [PWR SHARE](#pwr_share) is set to **Disabled** or **Master**. Set the current at which the EV should start solar charging: -0 to -48A (sum of all phases).
 
-## STOP  
+## STOP
 Only shown when [MODE](#mode) is set to **Solar** and [PWR SHARE](#pwr_share) is set to **Disabled** or **Master**. Stop charging when there is not enough solar power available. 1-60 minutes or
-  - **Disabled**: Never stop charging.  
- 
+  - **Disabled**: Never stop charging.
+
 ## IMPORT
 Only shown when [MODE](#mode) is set to **Solar** and [PWR SHARE](#pwr_share) is set to **Disabled** or **Master**. Allow additional grid power when solar charging: 0-20A (sum of all phases). Use this when there is not enough solar power but you want to use as much solar power as possible.
 
@@ -131,8 +131,8 @@ Use an RFID Card Reader to Enable/Disable Access to the EVSE. A maximum of 100 R
 Enable Wifi connection to your network.
 
 - **Disabled**: Wifi connection is disabled.
-- **SetupWifi** 
-  - v3.6.3 or older:  
+- **SetupWifi**
+  - v3.6.3 or older:
   The SmartEVSE presents itself as a Wifi Acces Point with SSID "smartevse-xxxx". Connect with your phone to that access point, go to [http://192.168.4.1/](http://192.168.4.1/) and configure your Wifi SSID and key (password).
   - v.3.6.4 and newer:
     - Connect your smartphone to the wifi network you want your SmartEVSE connected to.
@@ -147,6 +147,7 @@ Enable Wifi connection to your network.
     - Leave Custom Data empty
     - Press **Confirm**, within 30 seconds the app will confirm a MAC address and an IP address.
     - You are connected now. If you want special stuff (static IP address, special DNS address), configure them on your AP/router.
+  * NOTE: **this is going to change in the rob040 repo**; no longer the need of weird app on your phone!
 
   - v3.6.4 and newer BACKUP PROCEDURE: if you don't get it to work with the ESPTouch app, there is a backup procedure:
     - connect your SmartEVSE with a USB cable to your PC
@@ -159,7 +160,7 @@ Enable Wifi connection to your network.
       - 1 stopbit
     - on the SmartEVSE LCD screen, select "Wifi", select "SetupWifi"
     - press the middle button to start the configuration procedure
-    - on your terminal window you should see a request to enter your WiFi access point SSID and password. 
+    - on your terminal window you should see a request to enter your WiFi access point SSID and password.
     - the controller should now connect to WiFi.
 - **Enabled**: Connect to your network via Wifi.
 
@@ -167,22 +168,22 @@ Enable Wifi connection to your network.
 Only appears when [WIFI](#wifi) is **Enabled**. Automatic update of the SmartEVSE firmware.
 
 - **Disabled**: No automatic update.
-- **Enabled**: Checks daily for a new stable firmware version and installs it when no EV is connected.  
+- **Enabled**: Checks daily for a new stable firmware version and installs it when no EV is connected.
   **Note**: This will not work if your version is not in the format `vx.y.z` (e.g., v3.6.1). Locally compiled versions or RCx versions will not auto-update.
 
 ## MAX TEMP
-Maximum allowed temperature for your SmartEVSE: 40-75°C (default 65°C).  
+Maximum allowed temperature for your SmartEVSE: 40-75°C (default 65°C).
 Charging will stop once the internal temperature reaches this threshold and resume once it drops to 55°C.
 
 ## CAPACITY
 Only appears when a [MAINSMET](#mainsmet) is configured. Maximum allowed mains current summed over all phases: 10-600A. Used for the EU Capacity rate limiting.
 
 ## CAP STOP
-Only appears when [CAPACITY](#capacity) is configured. Timer in minutes. If CAPACITY is exceeded, charging will not immediately stop but will wait until the timer expires.  
+Only appears when [CAPACITY](#capacity) is configured. Timer in minutes. If CAPACITY is exceeded, charging will not immediately stop but will wait until the timer expires.
 - If set to **Disabled**, charging stops immediately when CAPACITY is exceeded.
 
 ## CONTACT2
-Use a second contactor (C2) to switch phases L2 and L3. 
+Use a second contactor (C2) to switch phases L2 and L3.
 
 - **Not present**: The second contactor is not present, and SmartEVSE assumes 3-phase charging.
 - **Always Off**: C2 is always off, single-phase charging.
@@ -205,6 +206,10 @@ For the specification of the REST API, see [REST API](REST_API.md)
 
 # MQTT API
 Your SmartEVSE can now export the most important data to your MQTT-server. Just fill in the configuration data on the webserver and the data will automatically be announced to your MQTT server. Note that because the configuration data is transported to the SmartEVSE via the URL, special characters are not allowed.
+
+More detail of the API is described [MQTT API document](MQTT_API.md)
+
+### MQTT usage examples
 
 You can easily show all the MQTT topics published:
 ```
@@ -246,6 +251,8 @@ mosquitto_pub  -h ip-of-mosquitto-server -u username -P password -t 'SmartEVSE-x
 ...where L1 - L3 are the currents in deci-Ampères. So 100 means 10.0A.
 ...where P is the Power in W,
 ...where E is the Energy in Wh.
+
+### MQTT testing
 
 You can find test scripts in the [test directory](https://github.com/SmartEVSE/SmartEVSE-3/tree/master/SmartEVSE-3/test) that feed EV and MainsMeter data to your MQTT server.
 
