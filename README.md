@@ -6,9 +6,6 @@ SmartEVSE v3
 >
 > Do check the [unique features of THIS fork](#unique-features-of-this-fork)
 >
->
-> Do check the [unique features of THIS fork](#unique-features-of-this-fork)
->
 
 Smart Electric Vehicle Charge Controller
 
@@ -29,15 +26,12 @@ This repo provides the software (firmware) for the controller.
 1. **NORMAL**
    The most basic mode of EV charging; It supplies as much current as configured, taking the mains fuses, the charge cable capacity and EV max into account. The other home consumers and supplies are __not__ taken into account.
 
-
 2. **SMART**
    Similar to NORMAL, but takes other home consumers and supplies into account. This assures that at no time the main fuses are overloaded due to multiple active high power consumers being active. The user has also more control over limiting the current draw by the charging car.
-
 
 3. **SOLAR**
    In this mode, the car is charged with Solar surplus power, that is, after all home consumers are supplied with Solar power and net zero power is send to or consumed from the power company.
    The EVSE uses 1-phase charging (typically 6A - 16A = 1.4 kW - 3.6 kW) and 3-phase charging (typically 3x6 - 3x16A = 4.1 kW - 11kW) whenever possible, using an extra 2-phase contactor.
-
 
 For SMART and SOLAR modes, an extra sensorbox or one of many alternative methods of providing Mains phase current information is necessary.
 
@@ -92,10 +86,6 @@ on the [Configuration page](docs/configuration.md#wifi).
 
   * NOTE: **this is going to change in the rob040 repo**; no longer the need of weird app on your phone!
 
-on the [Configuration page](docs/configuration.md#wifi).
-
-  * NOTE: **this is going to change in the rob040 repo**; no longer the need of weird app on your phone!
-
 
 # Updating Firmware
 
@@ -106,12 +96,6 @@ After updating the firmware, you can access the status page again using the norm
 
 # Documentation
 
- - [Hardware installation](docs/installation.md)
- - [Configuration](docs/configuration.md)
- - [Operation](docs/operation.md)
- - [REST API](docs/REST_API.md)
- - [MQTT API](docs/MQTT_API.md)
- - [Building and Flashing the firmware](docs/building_flashing.md)
  - [Hardware installation](docs/installation.md)
  - [Configuration](docs/configuration.md)
  - [Operation](docs/operation.md)
