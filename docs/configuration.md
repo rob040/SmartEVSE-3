@@ -15,7 +15,8 @@ By default, you are in normal EVSE mode. You can also choose smart mode or solar
 
 - **Normal**: The EV will charge with the current set at [MAX](#max).
 - **Smart**: The EV will charge with a dynamic charge current, depending on [MAINS MET](#mains-met) data, [MAINS](#mains), [MAX](#max) and [MIN](#min) settings.
-- **Solar**: The EV will charge using solar power.
+- **Solar**: The EV will charge using solar power. The EV will charge with a dynamic charge current, attempting net-zero consumption, depending on [MAINS MET](#mains-met) data, [START](#start), [STOP](#start), [IMPORT](#import) settings. Depending on [CONTACT2](#contact2) setting, it can use 1-phase and/or 3-phase charging depending on solar production.
+
 
 ## CONFIG
 Configure SmartEVSE with Type 2 Socket or fixed cable.
