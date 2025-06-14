@@ -543,6 +543,16 @@ void SetCPDuty(uint32_t DutyCycle){
     CurrentPWM = DutyCycle;
 }
 
+// Format RFID in hex format char string of upto 15 bytes
+void formatRFIDstr(char *str)
+{
+    if (RFID[0] == 0x01) {  // old reader 6 byte UID starts at RFID[1]
+        sprintf(str, "%02X%02X%02X%02X%02X%02X", RFID[1], RFID[2], RFID[3], RFID[4], RFID[5], RFID[6]);
+    }
+    else {
+        sprintf(str, "%02X%02X%02X%02X%02X%02X%02X", RFID[0], RFID[1], RFID[2], RFID[3], RFID[4], RFID[5], RFID[6]);
+    }
+}
 
 #if ENABLE_OCPP
 // Inverse function of SetCurrent (for monitoring and debugging purposes)
@@ -3271,9 +3281,9 @@ void mqttPublishData() {
             MQTTclient.publish(MQTTprefix + "/RFID", !RFIDReader ? "Not Installed" : RFIDstatus >= 8 ? "NOSTATUS" : StrRFIDStatusWeb[RFIDstatus], true, 0);
         }
         if (RFIDReader && RFIDReader != 6 && memcmp(s_RFIDtag, RFID, sizeof(s_RFIDtag)) != 0) { //RFIDLastRead not updated in Remote/OCPP mode
-            char buf[13];
+            char buf[15];
             memcpy(s_RFIDtag, RFID, sizeof(s_RFIDtag));
-            sprintf(buf, "%02X%02X%02X%02X%02X%02X", RFID[1], RFID[2], RFID[3], RFID[4], RFID[5], RFID[6]);
+            formatRFIDstr(buf);
             MQTTclient.publish(MQTTprefix + "/RFIDLastRead", buf, true, 0);
         }
         if (s_state != State) {
@@ -4271,11 +4281,7 @@ bool handle_URI(struct mg_connection *c, struct mg_http_message *hm,  webServerR
         doc["evse"]["rfid"] = !RFIDReader ? "Not Installed" : RFIDstatus >= 8 ? "NOSTATUS" : StrRFIDStatusWeb[RFIDstatus];
         if (RFIDReader && RFIDReader != 6) { //RFIDLastRead not updated in Remote/OCPP mode
             char buf[15];
-            if (RFID[0] == 0x01) {  // old reader 6 byte UID starts at RFID[1]
-                sprintf(buf, "%02X%02X%02X%02X%02X%02X", RFID[1], RFID[2], RFID[3], RFID[4], RFID[5], RFID[6]);
-            } else {
-                sprintf(buf, "%02X%02X%02X%02X%02X%02X%02X", RFID[0], RFID[1], RFID[2], RFID[3], RFID[4], RFID[5], RFID[6]);
-            }
+            formatRFIDstr(buf);
             doc["evse"]["rfid_lastread"] = buf;
         }
 
@@ -5285,21 +5291,13 @@ void ocppLoop() {
             OcppTrackAccessBit = true;
             _LOG_A("OCPP detected Access_bit set\n");
             char buf[15];
-            if (RFID[0] == 0x01) {  // old reader 6 byte UID starts at RFID[1]
-                sprintf(buf, "%02X%02X%02X%02X%02X%02X", RFID[1], RFID[2], RFID[3], RFID[4], RFID[5], RFID[6]);
-            } else {
-                sprintf(buf, "%02X%02X%02X%02X%02X%02X%02X", RFID[0], RFID[1], RFID[2], RFID[3], RFID[4], RFID[5], RFID[6]);
-            }
+            formatRFIDstr(buf);
             beginTransaction_authorized(buf);
         } else if (!Access_bit && (OcppTrackAccessBit || (getTransaction() && getTransaction()->isActive()))) {
             OcppTrackAccessBit = false;
             _LOG_A("OCPP detected Access_bit unset\n");
             char buf[15];
-            if (RFID[0] == 0x01) {  // old reader 6 byte UID starts at RFID[1]
-                sprintf(buf, "%02X%02X%02X%02X%02X%02X", RFID[1], RFID[2], RFID[3], RFID[4], RFID[5], RFID[6]);
-            } else {
-                sprintf(buf, "%02X%02X%02X%02X%02X%02X%02X", RFID[0], RFID[1], RFID[2], RFID[3], RFID[4], RFID[5], RFID[6]);
-            }
+            formatRFIDstr(buf);
             endTransaction_authorized(buf);
         }
     }
