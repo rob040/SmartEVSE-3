@@ -1,9 +1,9 @@
 
 # How to configure
-* First configure all settings that are shown to you (see below); don't configure your MAINSMET
+* First configure all settings that are shown to you (see below); don't configure your mains meter (MAINS MET).
 * Now you are ready to test/operate your SmartEVSE in its simplest mode, called Normal Mode.
-* If your EV charges at MAX current, everything works as expected, and you don't have a MAINSMET, you are done!
-* If you have a MAINSMET, configure it now; browse through the settings again, since now other options have opened up
+* If your EV charges at MAX current, everything works as expected, and you don't have a mains meter, you are done!
+* If you have a mains meter [(MAINS MET)](#mains-met), configure it now; browse through the settings again, since now other options have opened up
 * If you are feeding your SmartEVSE with MAINS or EV data through the REST API or the MQTT API, make sure you have set up these feeds; as soon as you select "API" for the Meters, the data is expected within 11 seconds! You can use the test scripts in the test directory to feed your MQTT server with test data.
 * If you configured MULTIple SmartEVSE's, follow the instructions below
 * Put your SmartEVSE in Solar Mode, and some specific settings for Solar Mode will open up
@@ -11,10 +11,10 @@
 
 # All menu options on the LCD screen:
 ## MODE
-By default, you are in normal EVSE mode. You can also choose smart mode or solar mode, but these modes require configuring a [MAINS MET](#mains_met) to function.
+By default, you are in normal EVSE mode. You can also choose smart mode or solar mode, but these modes require configuring a [MAINS MET](#mains-met) to function.
 
 - **Normal**: The EV will charge with the current set at [MAX](#max).
-- **Smart**: The EV will charge with a dynamic charge current, depending on [MAINSMET](#mainsmet) data, [MAINS](#mains), [MAX](#max) and [MIN](#min) settings.
+- **Smart**: The EV will charge with a dynamic charge current, depending on [MAINS MET](#mains-met) data, [MAINS](#mains), [MAX](#max) and [MIN](#min) settings.
 - **Solar**: The EV will charge using solar power.
 
 ## CONFIG
@@ -26,6 +26,7 @@ Configure SmartEVSE with Type 2 Socket or fixed cable.
 ## LOCK
 Only appears when [CONFIG](#config) is set to **Socket**.
 
+Sets the type of charge socket lock is used. Refer to [Hardware installation](installation.md#hardware-installation) for more info.
 - **Disabled**: No lock is used.
 - **Solenoid**: Dostar, DUOSIDA DSIEC-ELB / ELM, or Ratio lock.
 - **Motor**: Signal wire reversed, DUOSIDA DSIEC-EL or Phoenix Contact.
@@ -38,8 +39,9 @@ Power Share (formerly LOAD BAL). 2 Upto 8 SmartEVSE’s can be connected via Mod
 - **Node1-7**: Set the other SmartEVSE’s to Node 1-7.
 
 ## MAINS MET
-Only appears if [MODE](#mode) is **Smart** or **Solar**. Set the type of MAINS kWh Meter.
+Only appears if [MODE](#mode) is **Smart** or **Solar**.
 
+Set the type of MAINS kWh Meter.
 - **Disabled**: No MAINS meter connected (only Normal mode possible).
 - **Sensorbox**: The Sensorbox sends measurement data to the SmartEVSE.
 - **API**: MAINS meter data is fed through the [REST API](REST_API.md) or [MQTT API](MQTT_API.md).
@@ -74,26 +76,38 @@ If EV METER is not **Disabled** and not **API**, this setting appears:
 - **EV ADR**: Set the Modbus address for the EV Meter.
 
 ## MAINS
-Only appears when a [MAINS MET](#main_smet) is configured. Set max mains current (10-200A) per phase.
+Only appears when a [MAINS MET](#mains-met) is configured.
+
+Set max mains current (10-200A) per phase.
 
 ## MIN
-Only appears when a [MAINS MET](#main_smet) is configured. Set the min charge current for the EV (6-16A) per phase.
+Only appears when a [MAINS MET](#mains_met) is configured.
+
+Set the min charge current for the EV (6-16A) per phase.
 
 ## MAX
 Set the MAX charge current for the EV: (10-80A) per phase. If [CONFIG](#config) is set to **Fixed**, configure MAX to be lower than or equal to the maximum current that your fixed cable can carry.
 
 ## CIRCUIT
-Only appears when an [EV METER](#ev_meter) is configured, in **Smart** or **Solar** mode. Set the max current the EVSE circuit can handle (power sharing): 10-200A.
+Only appears when an [EV METER](#ev_meter) is configured, in **Smart** or **Solar** mode.
+
+Set the max current the EVSE circuit can handle (power sharing): 10-200A.
 
 ## START
-Only shown when [MODE](#mode) is set to **Solar** and [PWR SHARE](#pwr_share) is set to **Disabled** or **Master**. Set the current at which the EV should start solar charging: -0 to -48A (sum of all phases).
+Only appears when [MODE](#mode) is set to **Solar** and [PWR SHARE](#pwr_share) is set to **Disabled** or **Master**.
+
+Set the current at which the EV should start solar charging: -0 to -48A (sum of all phases).
 
 ## STOP
-Only shown when [MODE](#mode) is set to **Solar** and [PWR SHARE](#pwr_share) is set to **Disabled** or **Master**. Stop charging when there is not enough solar power available. 1-60 minutes or
+Only appears when [MODE](#mode) is set to **Solar** and [PWR SHARE](#pwr_share) is set to **Disabled** or **Master**.
+
+Stop charging when there is not enough solar power available. 1-60 minutes or
   - **Disabled**: Never stop charging.
 
 ## IMPORT
-Only shown when [MODE](#mode) is set to **Solar** and [PWR SHARE](#pwr_share) is set to **Disabled** or **Master**. Allow additional grid power when solar charging: 0-20A (sum of all phases). Use this when there is not enough solar power but you want to use as much solar power as possible.
+Only appears when [MODE](#mode) is set to **Solar** and [PWR SHARE](#pwr_share) is set to **Disabled** or **Master**.
+
+Allow additional grid power when solar charging: 0-20A (sum of all phases). Use this when there is not enough solar power but you want to use as much solar power as possible.
 
 **Important Note**: START and IMPORT are summed over all phases, and MIN is per phase!
 
@@ -106,8 +120,6 @@ Set the Function of an External Switch (Pin SW or Connector P2).
 - **Sma-Sol B**: A momentary push button is used to switch between Smart and Solar modes.
 - **Sma-Sol S**: A toggle switch is used to switch between Smart and Solar modes.
 - **Grid Relay**: A relay from your energy provider is connected; when the relay is open, power usage is limited to 4.2kW (Energy Industry Act, par 14a).
-- **Custom B**: A momentary push button can be used for external integrations.
-- **Custom S**: A toggle switch can be used for external integrations.
 
 ## RCMON
 Residual Current Monitor (RCM14-03) plugged into connector P1.
@@ -132,9 +144,9 @@ Enable Wifi connection to your network.
 
 - **Disabled**: Wifi connection is disabled.
 - **SetupWifi**
-  - v3.6.3 or older:
+  - v3.6.3 or older, v3.48.x and newer:
   The SmartEVSE presents itself as a Wifi Acces Point with SSID "smartevse-xxxx". Connect with your phone to that access point, go to [http://192.168.4.1/](http://192.168.4.1/) and configure your Wifi SSID and key (password).
-  - v.3.6.4 and newer:
+  - v.3.6.4 to 3.8.4:
     - Connect your smartphone to the wifi network you want your SmartEVSE connected to.
     - Download and run the ESPTouch app from your favorite app store [Android](https://play.google.com/store/apps/details?id=com.fyent.esptouch.android&hl=en_US:) (please ignore the strange Author name) or [Apple](https://apps.apple.com/us/app/espressif-esptouch/id1071176700) or  [Github](https://github.com/EspressifApp/EsptouchForAndroid) (for source code).
     - Choose EspTouch V2.
@@ -149,7 +161,7 @@ Enable Wifi connection to your network.
     - You are connected now. If you want special stuff (static IP address, special DNS address), configure them on your AP/router.
   * NOTE: **this is going to change in the rob040 repo**; no longer the need of weird app on your phone!
 
-  - v3.6.4 and newer BACKUP PROCEDURE: if you don't get it to work with the ESPTouch app, there is a backup procedure:
+  - v3.6.4 to 3.8.4 BACKUP PROCEDURE: if you don't get it to work with the ESPTouch app, there is a backup procedure:
     - connect your SmartEVSE with a USB cable to your PC
     - install the USB driver (Windows) or not (Linux) for ESP32 chipset
     - connect your favorite serial terminal to the appropriate port,
@@ -165,21 +177,27 @@ Enable Wifi connection to your network.
 - **Enabled**: Connect to your network via Wifi.
 
 ## AUTOUPDAT
-Only appears when [WIFI](#wifi) is **Enabled**. Automatic update of the SmartEVSE firmware.
+Only appears when [WIFI](#wifi) is **Enabled**.
+
+Automatic update of the SmartEVSE firmware.
 
 - **Disabled**: No automatic update.
 - **Enabled**: Checks daily for a new stable firmware version and installs it when no EV is connected.
   **Note**: This will not work if your version is not in the format `vx.y.z` (e.g., v3.6.1). Locally compiled versions or RCx versions will not auto-update.
 
 ## MAX TEMP
-Maximum allowed temperature for your SmartEVSE: 40-75°C (default 65°C).
+Maximum allowed internal temperature of your SmartEVSE: 40-75°C (default 65°C).
 Charging will stop once the internal temperature reaches this threshold and resume once it drops to 55°C.
 
 ## CAPACITY
-Only appears when a [MAINSMET](#mainsmet) is configured. Maximum allowed mains current summed over all phases: 10-600A. Used for the EU Capacity rate limiting.
+Only appears when a [MAINS MET](#mains-met) is configured.
+
+Maximum allowed mains current summed over all phases: 10-600A. Used for the EU Capacity rate limiting.
 
 ## CAP STOP
-Only appears when [CAPACITY](#capacity) is configured. Timer in minutes. If CAPACITY is exceeded, charging will not immediately stop but will wait until the timer expires.
+Only appears when [CAPACITY](#capacity) is configured.
+
+Capacity stop Timer in minutes. If CAPACITY is exceeded, charging will not immediately stop but will wait until the timer expires.
 - If set to **Disabled**, charging stops immediately when CAPACITY is exceeded.
 
 ## CONTACT2
@@ -205,7 +223,7 @@ internal load balancing means to be turned off.
 For the specification of the REST API, see [REST API](REST_API.md)
 
 # MQTT API
-Your SmartEVSE can now export the most important data to your MQTT-server. Just fill in the configuration data on the webserver and the data will automatically be announced to your MQTT server. Note that because the configuration data is transported to the SmartEVSE via the URL, special characters are not allowed.
+Your SmartEVSE can export the most important data to your MQTT-server. Just fill in the configuration data on the webserver and the data will automatically be announced to your MQTT server. Note that because the configuration data is transported to the SmartEVSE via the URL, special characters are not allowed.
 
 More detail of the API is described [MQTT API document](MQTT_API.md)
 
