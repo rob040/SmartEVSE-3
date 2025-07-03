@@ -177,15 +177,15 @@
 
 // Another way - for compatibility
 
-#define DEBUG(fmt, ...)   	rdebugA(fmt, ##__VA_ARGS__)
+#define RDEBUG(fmt, ...)   	rdebugA(fmt, ##__VA_ARGS__)
 
-#define DEBUG_A(fmt, ...) 	rdebugA(fmt, ##__VA_ARGS__)
-#define DEBUG_P(fmt, ...) 	rdebugP(fmt, ##__VA_ARGS__)
-#define DEBUG_V(fmt, ...) 	rdebugV(fmt, ##__VA_ARGS__)
-#define DEBUG_D(fmt, ...) 	rdebugD(fmt, ##__VA_ARGS__)
-#define DEBUG_I(fmt, ...) 	rdebugI(fmt, ##__VA_ARGS__)
-#define DEBUG_W(fmt, ...) 	rdebugW(fmt, ##__VA_ARGS__)
-#define DEBUG_E(fmt, ...) 	rdebugE(fmt, ##__VA_ARGS__)
+#define RDEBUG_A(fmt, ...) 	rdebugA(fmt, ##__VA_ARGS__)
+#define RDEBUG_P(fmt, ...) 	rdebugP(fmt, ##__VA_ARGS__)
+#define RDEBUG_V(fmt, ...) 	rdebugV(fmt, ##__VA_ARGS__)
+#define RDEBUG_D(fmt, ...) 	rdebugD(fmt, ##__VA_ARGS__)
+#define RDEBUG_I(fmt, ...) 	rdebugI(fmt, ##__VA_ARGS__)
+#define RDEBUG_W(fmt, ...) 	rdebugW(fmt, ##__VA_ARGS__)
+#define RDEBUG_E(fmt, ...) 	rdebugE(fmt, ##__VA_ARGS__)
 
 // New way: To compatibility with SerialDebug (can use RemoteDebug or SerialDebug)
 // This is my favorite :)
@@ -407,15 +407,15 @@ private:
 #define rdebugEln(...)
 #define rdebug(...)
 
-#define DEBUG(...)
+#define RDEBUG(...)
 
-#define DEBUG_A(...)
-#define DEBUG_P(...)
-#define DEBUG_V(...)
-#define DEBUG_D(...)
-#define DEBUG_I(...)
-#define DEBUG_W(...)
-#define DEBUG_E(...)
+#define RDEBUG_A(...)
+#define RDEBUG_P(...)
+#define RDEBUG_V(...)
+#define RDEBUG_D(...)
+#define RDEBUG_I(...)
+#define RDEBUG_W(...)
+#define RDEBUG_E(...)
 
 #define debugA(...)
 #define debugP(...)
