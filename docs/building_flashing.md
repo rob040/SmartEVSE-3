@@ -12,15 +12,15 @@ cd SmartEVSE-3/SmartEVSE-3
 pio run
 ```
 
-To enable the telnet server that allows you to online view the debug logs, add the compile flag like this:
+To have debug output on USB serial port, run PIO with this option:
 ```
-PLATFORMIO_BUILD_FLAGS='-DDBG=1' pio run
+pio run -e debug_ser
 ```
 
-Other compile flags:
-* DDBG=0 : no logging (default)
-* DDBG=2 : log via USB-C connector
-* DMIN_CURRENT=5 ; decrease minimum allowed current from 6A to 5A ----> THIS IS NOT FOLLOWING THE PROTOCOLS SO AT YOUR OWN RISK !!!
+To enable the telnet server that allows you to online view the debug logs, run PIO with this option:
+```
+pio run -e debug_telnet
+```
 
 If you get all kinds of mongoose compile errors (mg_....), that means that your python environment is not installed correctly.
 Usually a link from python python3 solves the problem:

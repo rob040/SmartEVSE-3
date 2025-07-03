@@ -1,6 +1,6 @@
 
 # How to configure
-* First configure all settings that are shown to you (see below); don't configure your mains meter (MAINS MET).
+* First configure all settings that are shown to you (see below); don't configure your mains meter [(MAINS MET)](#mains-met) yet, leave it to 'Disabled'.
 * Now you are ready to test/operate your SmartEVSE in its simplest mode, called Normal Mode.
 * If your EV charges at MAX current, everything works as expected, and you don't have a mains meter, you are done!
 * If you have a mains meter [(MAINS MET)](#mains-met), configure it now; browse through the settings again, since now other options have opened up
