@@ -1029,7 +1029,7 @@ char IsCurrentAvailable(void) {
     }
 #endif //ENABLE_OCPP
 
-    _LOG_D("Current available checkpoint D. ActiveEVSE increased by one=%i, TotalCurrent=%.1fA, StartCurrent=%iA, Isum=%.1fA, ImportCurrent=%iA.\n", ActiveEVSE, (float) TotalCurrent/10, StartCurrent, (float)Isum/10, ImportCurrent);
+    _LOG_V("Current available checkpoint D. ActiveEVSE increased by one=%i, TotalCurrent=%.1fA, StartCurrent=%iA, Isum=%.1fA, ImportCurrent=%iA.\n", ActiveEVSE, (float) TotalCurrent/10, StartCurrent, (float)Isum/10, ImportCurrent);
     return 1;
 }
 
@@ -3987,6 +3987,15 @@ void validate_settings(void) {
         }
     }
 
+    // Generate random password for AP once
+    while (APpassword[0] <= '0') {
+        for (int i = 0, c = 0; i < (sizeof(APpassword) - 1); i++) {
+            c = random(16) + '0';
+            if (c > '9') c += 'A' - '9' - 1;
+            APpassword[i] = c;
+        }
+    }
+
     // Sensorbox v2 has always address 0x0A
     if (MainsMeter.Type == EM_SENSORBOX) MainsMeter.Address = 0x0A;
     // set Lock variables for Solenoid or Motor
@@ -4079,6 +4088,8 @@ void read_settings() {
         EMConfig[EM_CUSTOM].DataType = (mb_datatype)preferences.getUChar("EMDataType",EMCUSTOM_DATATYPE);
         EMConfig[EM_CUSTOM].Function = preferences.getUChar("EMFunction",EMCUSTOM_FUNCTION);
         WIFImode = preferences.getUChar("WIFImode",WIFI_MODE);
+        preferences.getBytes("APpassword", APpassword, sizeof(APpassword));
+        _LOG_A("APpassword=%s\n", APpassword);
         DelayedStartTime.epoch2 = preferences.getULong("DelayedStartTim", DELAYEDSTARTTIME); //epoch2 is 4 bytes long on arduino; NVS key has reached max size
         DelayedStopTime.epoch2 = preferences.getULong("DelayedStopTime", DELAYEDSTOPTIME);    //epoch2 is 4 bytes long on arduino
         DelayedRepeat = preferences.getUShort("DelayedRepeat", 0);
@@ -4149,6 +4160,7 @@ void write_settings(void) {
     preferences.putUChar("EMDataType", EMConfig[EM_CUSTOM].DataType);
     preferences.putUChar("EMFunction", EMConfig[EM_CUSTOM].Function);
     preferences.putUChar("WIFImode", WIFImode);
+    preferences.putBytes("APpassword", APpassword, sizeof(APpassword));
     preferences.putUShort("EnableC2", EnableC2);
     preferences.putString("RequiredEVCCID", String(RequiredEVCCID));
     preferences.putUShort("maxTemp", maxTemp);
@@ -5382,6 +5394,7 @@ void setup() {
     Serial.begin(115200);
     while (!Serial);
     _LOG_A("SmartEVSE v3 powerup\n");
+    _LOG_A("SmartEVSE version %s\n", VERSION);
 
     // configure SPI connection to LCD
     // only the SPI_SCK and SPI_MOSI pins are used

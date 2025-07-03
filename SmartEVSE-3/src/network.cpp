@@ -13,6 +13,16 @@
 #if SMARTEVSE_VERSION == 3
 #include "OneWire.h"
 #endif
+#if WIFI_CONFIG==USE_WIFI_MANAGER //|| WIFI_CONFIG==USE_WIFI_MANAGER_LITE
+#include <WiFiManager.h>
+WiFiManager wifiManager;
+#endif
+#if WIFI_CONFIG==USE_WIFI_MANAGER_LITE
+#include <ESP_WiFiManager_Lite.h>
+ESP_WiFiManager_Lite ESP_WifiManager;
+bool LOAD_DEFAULT_CONFIG_DATA    =  false;
+ESP_WM_LITE_Configuration defaultConfig; // ZERO; not used
+#endif
 
 #ifndef DEBUG_DISABLED
 RemoteDebug Debug;
@@ -60,7 +70,12 @@ uint32_t serialnr;
 
 // The following data will be updated by eeprom/storage data at powerup:
 uint8_t WIFImode = WIFI_MODE;                                               // WiFi Mode (0:Disabled / 1:Enabled / 2:Start Portal)
-char SmartConfigKey[] = "0123456789abcdef";                                 // SmartConfig / EspTouch AES key, used to encyrypt the WiFi password.
+#if WIFI_CONFIG==USE_WIFI_MANAGER //|| WIFI_CONFIG==USE_WIFI_MANAGER_LITE
+#endif
+char APpassword[9] = "00000000";
+#if WIFI_CONFIG==USE_WIFI_SMART_CONFIG
+char SmartConfigKey[17] = "0123456789abcdef";                                 // SmartConfig / EspTouch AES key, used to encyrypt the WiFi password.
+#endif
 String TZinfo = "";                                                         // contains POSIX time string
 
 char *downloadUrl = NULL;
@@ -725,8 +740,11 @@ void setTimeZone(void * parameter) {
     }
 
     stream = httpClient.getStreamPtr();
+    int linecnt=0, bytecnt=0;
     while(httpClient.connected() && stream->available()) {
         l = stream->readStringUntil('\n');
+        linecnt++;
+        bytecnt+=l.length();
         if (l.indexOf(tzname) > 0) {
             int from = l.indexOf("\",\"") + 3;
             TZinfo = l.substring(from, l.length() - 1);
@@ -742,6 +760,8 @@ void setTimeZone(void * parameter) {
     }
     if (TZinfo == "") {
         _LOG_A("Could not find TZname %s in zones.csv.\n", tzname.c_str());
+        delay(2000);
+        _LOG_A("Searched %d lines, %d bytes, available %d\n", linecnt, bytecnt, stream->available());
         FREE(URL);
         onErrorCloseTask();
     }
@@ -1211,7 +1231,9 @@ void onWifiEvent(WiFiEvent_t event, WiFiEventInfo_t info) {
 void timeSyncCallback(struct timeval *tv)
 {
     LocalTimeSet = true;
-    _LOG_A("Synced clock to NTP server!");    // somehow adding a \n here hangs the telnet server after printing this message ?!?
+    _LOG_A("Synced clock to NTP server!\n");    // somehow adding a \n here hangs the telnet server after printing this message ?!?
+
+    _LOG_A("Time: %02u:%02u\n",timeinfo.tm_hour, timeinfo.tm_min);
 }
 
 
@@ -1235,7 +1257,31 @@ void SetupPortalTask(void * parameter) {
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         _LOG_A("Waiting for Mongoose Server to terminate\n");
     }
+#if WIFI_CONFIG==USE_WIFI_MANAGER //|| WIFI_CONFIG==USE_WIFI_MANAGER_LITE
+    wifiManager.setAPStaticIPConfig(IPAddress(192,168,4,1), IPAddress(192,168,4,1), IPAddress(255,255,255,0));
+    //wifiManager.setTitle(String title);
+    _LOG_A("Open Portal %s PW=%s\n", APhostname.c_str(), APpassword);
+    //don't show firmware update buttons in portal
+    std::vector<const char*> wmMenuItems = { "wifi", "info", "update", "erase", "exit" };
+    wifiManager.setMenu(wmMenuItems);
+    wifiManager.setShowInfoUpdate(true);
+    wifiManager.setShowStaticFields(true); // force show static ip fields
+    wifiManager.setShowDnsFields(true);    // force show dns field always
 
+    wifiManager.setConfigPortalTimeout(600);  // Portal will be available 2 minutes to connect to, then close. (if connected within this time, it will remain active)
+    delay(1000);
+    wifiManager.startConfigPortal(APhostname.c_str(), APpassword);
+    //_LOG_A("SetupPortalTask free ram: %u\n", uxTaskGetStackHighWaterMark( NULL ));
+    WiFi.disconnect(true);
+#endif
+#if WIFI_CONFIG==USE_WIFI_MANAGER_LITE
+    _LOG_A("Open Portal %s PW=%s\n", APhostname.c_str(), APpassword);
+    ESP_WifiManager.setConfigPortalIP(IPAddress(192,168,4,1));
+    ESP_WifiManager.setConfigPortal(APhostname.c_str(), APpassword);
+    ESP_WifiManager.begin();
+#endif
+
+#if WIFI_CONFIG==USE_WIFI_SMART_CONFIG
     //Init WiFi as Station, start SmartConfig
     WiFi.mode(WIFI_AP_STA);
     WiFi.beginSmartConfig(SC_TYPE_ESPTOUCH_V2, SmartConfigKey);
@@ -1257,7 +1303,7 @@ void SetupPortalTask(void * parameter) {
         delay(100);
     }                       // loop until connected or Wifi setup menu is exited.
     delay(2000);            // give smartConfig time to send provision status back to the users phone.
-
+#endif
     if (WiFi.status() == WL_CONNECTED) {
         _LOG_V("\nWiFi Connected, IP Address:%s.\n", WiFi.localIP().toString().c_str());
         WIFImode = 1;                                                           // we are already connected so don't call handleWIFImode
@@ -1281,7 +1327,9 @@ void SetupPortalTask(void * parameter) {
     } else
         s.begin(115200, SERIAL_8N1, PIN_PGD, PIN_TXD, false);                    // Input from TX of PIC, and debug output to USB
 #endif
+#if WIFI_CONFIG==USE_WIFI_SMART_CONFIG
     WiFi.stopSmartConfig(); // this makes sure repeated SmartConfig calls are succesfull
+#endif
     vTaskDelete(NULL);                                                          //end this task so it will not take up resources
 }
 
@@ -1327,7 +1375,9 @@ void WiFiSetup(void) {
         preferences.end();
 
         _LOG_A("hwversion %04x serialnr:%u \n",hwversion, serialnr);
-        //_LOG_A(ec_public);
+        //FIXME: log ec only for testing
+        //_LOG_A("ec_private = %s\n", ec_private.c_str());
+        //_LOG_A("ec_public = %s\n", ec_public.c_str());
     } else {
         _LOG_A("No KeyStorage found in nvs!\n");
         if (!serialnr) serialnr = MacId() & 0xffff;                             // when serialnr is not programmed (anymore), we use the Mac address
@@ -1341,9 +1391,16 @@ void WiFiSetup(void) {
     WiFi.setHostname(APhostname.c_str());
 
     mg_mgr_init(&mgr);  // Initialise event manager
-
+#if WIFI_CONFIG==USE_WIFI_MANAGER //|| WIFI_CONFIG==USE_WIFI_MANAGER_LITE
+    #if DBG > 0
+    //WIFImode = 2; // FIXME: force AP
+    WIFImode = 1; // FIXME: force AP
+    wifiManager.setDebugOutput(true);
+    #endif
+    wifiManager.setMinimumSignalQuality(-1);
+#endif
     WiFi.setAutoReconnect(true);                                                //actually does nothing since this is the default value
-    //WiFi.persistent(true);
+    WiFi.persistent(true);
     WiFi.onEvent(onWifiEvent);
 
     // Init and get the time
@@ -1354,12 +1411,14 @@ void WiFiSetup(void) {
     sntp_set_time_sync_notification_cb(timeSyncCallback);
     sntp_init();
 
+#if WIFI_CONFIG==USE_WIFI_SMART_CONFIG
     // Set random AES Key for SmartConfig provisioning, first 8 positions are 0
     // This key is displayed on the LCD, and should be entered when using the EspTouch app.
 #ifndef SENSORBOX_VERSION
     for (uint8_t i=0; i<8 ;i++) {
         SmartConfigKey[i+8] = random(9) + '1';
     }
+#endif
 #endif
 
     if (preferences.begin("settings", false) ) {

@@ -33,6 +33,21 @@
 #define DBG 0  //comment or set to 0 for production release, 0 = no debug 1 = debug over telnet, 2 = debug over usb serial
 #endif
 
+#ifndef WIFI_CONFIG
+// define WIFI_CONFIG to one of USE_WIFI_SMART_CONFIG  USE_WIFI_MANAGER USE_WIFI_MANAGER_LITE
+// USE_WIFI_SMART_CONFIG : ESP Smart Config requires some odd Smartphone APP to configure WIFI
+// USE_WIFI_MANAGER : USES tzapu/WiFiManager, creates accesspoint for WIFI config
+// USE_WIFI_MANAGER_LITE : USES khoih-prog/ESP_WiFiManager_Lite @ 1.10.5, creates accesspoint for WIFI config
+// Flash usage: SMART_CONFIG uses 2.1% (38.1k), WIFI_MANAGER_LITE uses 4.1% (73.7k), WIFI_MANAGER uses 5.4% (95.2k),
+// All in this particular setting at time of writing
+// The WIFI_MANAGER_LITE does add following libraries: LibLittleFS, libFS, libDNSServer, libWebServer;
+// when the other program parts would use these, the added flash size would be less, obviously.
+// My [rob040] choice is USE_WIFI_MANAGER_LITE for its convenience of use (I don't like to be dependent on extra Apps on my phone, that may stop working at any time)
+#define WIFI_CONFIG USE_WIFI_MANAGER_LITE
+//#define WIFI_CONFIG USE_WIFI_MANAGER
+//#define WIFI_CONFIG USE_WIFI_SMART_CONFIG
+#endif
+
 #ifndef FAKE_RFID
 //set FAKE_RFID to 1 to emulate an rfid reader with rfid of card = 123456
 //showing the rfid card is simulated by executing http://smartevse-xxx.lan/debug?showrfid=1
@@ -358,6 +373,11 @@
 #define EM_UNUSED_SLOT4 16
 #define EM_CUSTOM 17
 
+/* config options for WIFI_CONFIG */
+#define USE_WIFI_SMART_CONFIG   10
+#define USE_WIFI_MANAGER        11
+#define USE_WIFI_MANAGER_LITE   12
+
 typedef enum mb_datatype {
     MB_DATATYPE_INT32 = 0,
     MB_DATATYPE_FLOAT32 = 1,
@@ -371,10 +391,13 @@ extern portMUX_TYPE rtc_spinlock;   //TODO: Will be placed in the appropriate po
 #define RTC_ENTER_CRITICAL()    portENTER_CRITICAL(&rtc_spinlock)
 #define RTC_EXIT_CRITICAL()     portEXIT_CRITICAL(&rtc_spinlock)
 
-
-extern char SmartConfigKey[];
+#if WIFI_CONFIG==USE_WIFI_MANAGER //|| WIFI_CONFIG==USE_WIFI_MANAGER_LITE
+#endif
+extern char APpassword[9];
+#if WIFI_CONFIG==USE_WIFI_SMART_CONFIG
+extern char SmartConfigKey[17];
+#endif
 extern struct tm timeinfo;
-
 
 extern uint8_t Mode;                                                            // EVSE mode
 extern uint8_t LoadBl;                                                          // Load Balance Setting (Disable, Master or Node)
@@ -469,7 +492,12 @@ const struct {
     {"ENE REGI","Register for Energy (kWh) of custom electric meter", 0, 65534, EMCUSTOM_EREGISTER},
     {"ENE DIVI","Divisor for Energy (kWh) of custom electric meter",  0, 7, EMCUSTOM_EDIVISOR},
     {"READ MAX","Max register read at once of custom electric meter", 3, 255, 3},
+#if WIFI_CONFIG==USE_WIFI_MANAGER || WIFI_CONFIG==USE_WIFI_MANAGER_LITE
+    {"WIFI",    "Connect to WiFi access point",                       0, 2, WIFI_MODE},
+#endif
+#if WIFI_CONFIG==USE_WIFI_SMART_CONFIG
     {"WIFI",    "Connect SmartEVSE to WiFi",                          0, 2, WIFI_MODE},
+#endif
     {"AUTOUPDAT","Automatic Firmware Update",                         0, 1, AUTOUPDATE},
     {"CONTACT 2","Contactor2 (C2) behaviour",                          0, sizeof(StrEnableC2) / sizeof(StrEnableC2[0])-1, ENABLE_C2},
     {"MAX TEMP","Maximum temperature for the EVSE module",            40, 75, MAX_TEMPERATURE},

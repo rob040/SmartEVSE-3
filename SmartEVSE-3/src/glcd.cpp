@@ -88,7 +88,6 @@ tm DelayedStartTimeTM;
 time_t DelayedStartTime_Old;
 uint8_t MenuItems[MENU_EXIT];
 extern void handleWIFImode(void *s  = &Serial);
-extern char SmartConfigKey[16];
 
 #if SMARTEVSE_VERSION == 3
 
@@ -485,9 +484,23 @@ void GLCD(void) {
             // When Wifi Setup is selected, show AES key for the ESPTouch app
             } else if (WIFImode == 2) {
                 if (SubMenu && WiFi.getMode() != WIFI_AP_STA) {           // Do not show if AP_STA mode is started
+#if WIFI_CONFIG==USE_WIFI_MANAGER || WIFI_CONFIG==USE_WIFI_MANAGER_LITE
+                    sprintf(Str, "O button starts portal");
+#endif
+#if WIFI_CONFIG==USE_WIFI_SMART_CONFIG
                     sprintf(Str, "O button starts config");
+#endif
                     GLCD_write_buf_str(0,0, Str, GLCD_ALIGN_LEFT);
                 } else {
+#if WIFI_CONFIG==USE_WIFI_MANAGER || WIFI_CONFIG==USE_WIFI_MANAGER_LITE
+                    // Show Access Point name
+                    sprintf(Str, "AP:%u", serialnr);
+                    GLCD_write_buf_str(0,0, Str, GLCD_ALIGN_LEFT);
+                    // and password
+                    sprintf(Str, "PW:%s", APpassword);
+                    GLCD_write_buf_str(127,0, Str, GLCD_ALIGN_RIGHT);
+#endif
+#if WIFI_CONFIG==USE_WIFI_SMART_CONFIG
                     // Show ESPTouch key
                     sprintf(Str, "Key:%s", SmartConfigKey);
                     GLCD_write_buf_str(0, 0, Str, GLCD_ALIGN_LEFT);
@@ -495,6 +508,7 @@ void GLCD(void) {
                     GLCD_buffer_clr();
                     sprintf(Str, "Now use EspTouch app ");
                     GLCD_write_buf_str(0, 0, Str, GLCD_ALIGN_LEFT);
+#endif
                 }
             }
         }

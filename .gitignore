@@ -1,5 +1,6 @@
 .pio
 .log
+logs
 sdkconfig.*
 .vscode
 .DS_Store
