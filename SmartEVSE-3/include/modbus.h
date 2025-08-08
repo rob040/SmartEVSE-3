@@ -48,9 +48,9 @@ extern struct ModBus MB;
 
 // definition of MBserver / MBclient class is done in evse.cpp
 extern ModbusServerRTU MBserver;
-extern ModbusClientRTU MBclient; 
+extern ModbusClientRTU MBclient;
 
-void RS485SendBuf(uint8_t *buffer, uint8_t len);
+//void RS485SendBuf(uint8_t *buffer, uint8_t len);
 uint8_t mapModbusRegister2ItemID();
 
 // ########################### Modbus main functions ###########################

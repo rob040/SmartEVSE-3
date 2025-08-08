@@ -24,6 +24,7 @@
 
 #ifndef __GLCD_H
 #define __GLCD_H
+#include <stdint.h>
 
 #define GLCD_MERGE 0b00001000
 #define GLCD_HIRES_FONT
@@ -34,9 +35,9 @@
 
 extern void GLCDHelp(void);
 extern void GLCD(void);
-extern void GLCDMenu(unsigned char Buttons);
+extern void GLCDMenu(uint8_t Buttons);
 extern void GLCD_init(void);
-extern void GLCD_version(void);
+//extern void GLCD_version(void);
 extern bool GridRelayOpen;
 
 

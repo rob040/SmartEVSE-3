@@ -18,9 +18,17 @@
 WiFiManager wifiManager;
 #endif
 #if WIFI_CONFIG==USE_WIFI_MANAGER_LITE
-#include <ESP_WiFiManager_Lite.h>
+//#include <ESP_WiFiManager_Lite.h>
+//ESP_WiFiManager_Lite ESP_WifiManager;
+//bool LOAD_DEFAULT_CONFIG_DATA    =  false;
+//ESP_WM_LITE_Configuration defaultConfig; // ZERO; not used
+// For ESP_WiFiManager_Lite, the include sequence does matter!
+//#include <WiFiManager.h> // --> https://github.com/tzapu/WiFiManager
+//local version of #include <ESP_WiFiManager_Lite.h> // --> https://github.com/khoih-prog/ESP_WiFiManager_Lite
+#include "WmlSettings.h"
+#include "ESP_WiFiManager_Lite.h"
+#include "dynamicParams.h"
 ESP_WiFiManager_Lite ESP_WifiManager;
-bool LOAD_DEFAULT_CONFIG_DATA    =  false;
 ESP_WM_LITE_Configuration defaultConfig; // ZERO; not used
 #endif
 
